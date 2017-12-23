@@ -24,24 +24,64 @@
             width: 100px;
         }
 
+        .flex-center {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .hidden {
+            display: none;
+        }
+
         #clap-circle {
             cursor: pointer;
             width: 60px;
             height: 60px;
             border: 1px solid rgba(100,100,100,0.3);
             border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
         }
         
+        .clap-accent-paths {
+            fill: #429835;
+            stroke: none;
+        }
+
         #clap-circle:hover {
             border: 1px solid #429835;
             animation: circlehover 2.5s infinite;
         }
 
         #clap-circle:active {
-            animation: circleclick 0.75s infinite;
+            animation: circleclick 0.4s infinite;
+        }
+
+        .circle-pulse-clap {
+            animation: circlepulse 0.2s ease-in-out infinite;
+        }
+
+        .clap-count-container {
+            width: 60px;
+            height: 100px;
+            position: relative;
+        }
+
+        .clap-count-enter {
+            animation: clapcountenter 0.1s ease-in forwards;
+        }
+
+        .clap-count-exit {
+            animation: clapcountexit 0.5s ease-out forwards;
+        }
+
+        #clap-count {
+            width: 35px;
+            height: 35px;
+            font-size: 12px;
+            border-radius: 50%;
+            color: rgb(255,255,255);
+            background-color: #429835;
+            position: absolute;
         }
 
         #clap-svg {
@@ -72,47 +112,60 @@
             }
         }
 
+
+        @keyframes circlepulse {
+            40% {
+                width: 37px;
+                height: 37px;
+            }
+            80% {
+                width: 35px;
+                height; 37px;
+            }
+        }
+
+        @keyframes clapcountenter {
+            from {
+                transform: translateY(10px);
+                opacity: 0
+            }
+        }
+
+        @keyframes clapcountexit {
+            to {
+                transform: translateY(-100px);
+                opacity: 0            
+            }
+        }
+
     </style>
 </head>
 
 <body>
 
     <div class="clap-container">
-        <p id="clap-count">
-
-        </p>
+        <div class="clap-count-container flex-center">
+            <p id="clap-count" class="flex-center hidden"></p>
+        </div>
         <div class="flex-container">
-            <div id="clap-circle">
+            <div id="clap-circle" class="flex-center">
                     <svg id="clap-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 33 33">
                         <g fill-rule="evenodd">
                             <path id="hands" d="M29.58 17.1l-3.854-6.78c-.365-.543-.876-.899-1.431-.989a1.491 1.491 0 0 0-1.16.281c-.42.327-.65.736-.7 1.207v.001l3.623 6.367c2.46 4.498 1.67 8.802-2.333 12.807-.265.265-.536.505-.81.728 1.973-.222 3.474-1.286 4.45-2.263 4.166-4.165 3.875-8.6 2.215-11.36zm-4.831.82l-3.581-6.3c-.296-.439-.725-.742-1.183-.815a1.105 1.105 0 0 0-.89.213c-.647.502-.755 1.188-.33 2.098l1.825 3.858a.601.601 0 0 1-.197.747.596.596 0 0 1-.77-.067L10.178 8.21c-.508-.506-1.393-.506-1.901 0a1.335 1.335 0 0 0-.393.95c0 .36.139.698.393.95v.001l5.61 5.61a.599.599 0 1 1-.848.847l-5.606-5.606c-.001 0-.002 0-.003-.002L5.848 9.375a1.349 1.349 0 0 0-1.902 0 1.348 1.348 0 0 0 0 1.901l1.582 1.582 5.61 5.61a.6.6 0 0 1-.848.848l-5.61-5.61c-.51-.508-1.393-.508-1.9 0a1.332 1.332 0 0 0-.394.95c0 .36.139.697.393.952l2.363 2.362c.002.001.002.002.002.003l3.52 3.52a.6.6 0 0 1-.848.847l-3.522-3.523h-.001a1.336 1.336 0 0 0-.95-.393 1.345 1.345 0 0 0-.949 2.295l6.779 6.78c3.715 3.713 9.327 5.598 13.49 1.434 3.527-3.528 4.21-7.13 2.086-11.015zM11.817 7.727c.06-.328.213-.64.466-.893.64-.64 1.755-.64 2.396 0l3.232 3.232c-.82.783-1.09 1.833-.764 2.992l-5.33-5.33z"/>
-                            <path d="M13.285.48l-1.916.881 2.37 2.837z"/>
-                            <path d="M21.719 1.361L19.79.501l-.44 3.697z"/>
-                            <path d="M16.502 3.298L15.481 0h2.043z"/>
+                            <path class="clap-accent-paths" d="M13.285.48l-1.916.881 2.37 2.837z"/>
+                            <path class="clap-accent-paths" d="M21.719 1.361L19.79.501l-.44 3.697z"/>
+                            <path class="clap-accent-paths" d="M16.502 3.298L15.481 0h2.043z"/>
                         </g>
                     </svg>
             </div>
-            <p id="total-claps">
-            </p>
+            <p id="total-claps"></p>
         </div>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.20.3/TweenMax.min.js"></script>
     <script>
 
-
-        function throttle(func, msWait) {
-            let time = Date.now();
-            return function() {
-              if ((time + (msWait || 100) - Date.now()) < 0) {
-                func();
-                time = Date.now();
-              }
-            }
-          }
-
         class Clapper {
             constructor() {
-                this.clapSVG = document.getElementById('clap-svg')
                 this.clapCircle = document.getElementById('clap-circle')
                 this.hands = document.getElementById('hands')
                 this.totalClaps = document.getElementById('total-claps')
@@ -120,11 +173,15 @@
 
                 this.totalClapCount = 0
                 this.tempClapCount = 0
+                this.isClapping = false
+                this.lastClap = Date.now()
 
                 this.clap = this.clap.bind(this)
+                this.removeClapAnimations = this.removeClapAnimations.bind(this)
+                this.setClapAnimations = this.setClapAnimations.bind(this)
                 this.setHandsClapped = this.setHandsClapped.bind(this)
                 this.setClapCounts = this.setClapCounts.bind(this)
-                this.handleClick = this.handleClick.bind(this)
+                this.handleClickHold = this.handleClickHold.bind(this)
                 this.startClaps = this.startClaps.bind(this)
                 this.stopClaps = this.stopClaps.bind(this)
                 this.init = this.init.bind(this)
@@ -142,23 +199,49 @@
 
             setClapCounts() {
                 this.totalClaps.textContent = this.totalClapCount
-                this.clapCount.textContent = this.tempClapCount  
+                this.clapCount.textContent = '+' + this.tempClapCount  
+            }
+
+            setClapAnimations() {
+                this.clapCount.classList.remove('hidden')
+                this.clapCount.classList.add('clap-count-enter')
+                setTimeout(() => {                    
+                    this.clapCount.classList.remove('clap-count-enter')
+                    this.clapCount.classList.add('circle-pulse-clap')
+                }, 100)
+            }
+
+            removeClapAnimations() {
+                this.clapCount.classList.add('clap-count-exit')
+                setTimeout(() => {                    
+                    this.clapCount.classList.remove('clap-count-exit')
+                    this.clapCount.classList.add('hidden')
+                    this.clapCount.textContent = 0
+                }, 500)               
             }
             
-            handleClick(e) {
-                console.log("fire!")
-                this.clap()
-                if (this.totalClapsCount == 1) this.setHandsClapped()
+            handleClickHold(e) {
+                if (Date.now() - this.lastClick > 300) {
+                    this.clap()
+                }
                 this.setClapCounts()
+                if (this.totalClapCount == 1) this.setHandsClapped()
             }
 
             startClaps() {
-                this.clapInterval = setInterval(this.handleClick, 250)
-
+                this.handleClickHold()
+                this.clapInterval = setInterval(this.handleClickHold, 200)
+                this.setClapAnimations()
             }
 
             stopClaps() {
-                clearInterval(this.clapInterval)
+                this.lastClick = Date.now()
+                this.clapCount.classList.remove('circle-pulse-clap')
+                setTimeout(() => {
+                    this.tempClapCount = 0
+                    clearInterval(this.clapInterval)
+                    this.removeClapAnimations()
+                }, 500)
             }
 
             init() {
@@ -167,9 +250,11 @@
             }
         }
 
-const myClapper = new Clapper()
 
-myClapper.init()
+
+        const myClapper = new Clapper()
+
+        myClapper.init()
 
 
 
