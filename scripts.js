@@ -7,21 +7,22 @@ class Clapper {
 
         this.totalClapCount = 0
         this.tempClapCount = 0
-        this.isClapping = false
+        this.mouseDown = false
         this.lastClap = Date.now()
 
-        this.clap = this.clap.bind(this)
+        this.increaseClapCounter = this.increaseClapCounter.bind(this)
         this.removeClapAnimations = this.removeClapAnimations.bind(this)
         this.setClapAnimations = this.setClapAnimations.bind(this)
         this.setHandsClapped = this.setHandsClapped.bind(this)
         this.setClapCounts = this.setClapCounts.bind(this)
-        this.handleClick = this.handleClick.bind(this)
         this.startClaps = this.startClaps.bind(this)
         this.stopClaps = this.stopClaps.bind(this)
         this.init = this.init.bind(this)
+        this.handleClapInterval = this.handleClapInterval.bind(this)
+        this.handleIntervalClear = this.handleIntervalClear.bind(this)
     }
 
-    clap() {
+    increaseClapCounter() {
         this.totalClapCount++
         this.tempClapCount++
     }
@@ -55,32 +56,42 @@ class Clapper {
         }, 500)               
     }
     
-    handleClick(e) {
-        console.log('handle click');
-        this.clap()
-        this.setClapCounts()
-        if (this.totalClapCount == 1) this.setHandsClapped()
-    }
 
-    startClaps() {
-        console.log('start claps');
-        clearTimeout(this.stopAnimationTimeout)
-        this.handleClick()
-        this.setClapAnimations()
-        this.stopAnimationTimeout = setTimeout(this.stopClaps,500)
+    handleClapInterval() {
+        console.log("handle clap interval, ", this.mouseDown)
+        if(!this.mouseDown) {
+            "clap interval cleared"
+            clearInterval(this.clapInterval)
+            this.handleIntervalClear()
+        } else {
+            this.increaseClapCounter()
+            this.setClapCounts()
+            if (this.totalClapCount == 1) this.setHandsClapped()    
+            this.setClapAnimations()
+        }
     }
-
-    stopClaps() {
-        console.log('stop');
-        this.lastClick = Date.now()
+    handleIntervalClear() {
+        console.log("handle interval clear")
         this.clapCount.classList.remove('circle-pulse-clap')
         this.tempClapCount = 0
         this.removeClapAnimations()
     }
 
+    startClaps() {
+        this.mouseDown = true
+        this.handleClapInterval()
+        if (this.clapInterval) clearInterval(this.clapInterval)
+        this.clapInterval = setInterval(this.handleClapInterval,500)
+    }
+
+    stopClaps() {
+        console.log('mouseUp')
+        this.mouseDown = false
+    }
+
     init() {
         this.clapCircle.addEventListener("mousedown", this.startClaps)
-        // this.clapCircle.addEventListener("mouseup", this.stopClaps)               
+        this.clapCircle.addEventListener("mouseup", this.stopClaps)               
     }
 }
 
